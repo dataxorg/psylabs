@@ -16,7 +16,6 @@
 
     ::selection { background: #00ff9c; color:#000; }
 
-    /* Terminal scanline effect */
     body:before {
         content: "";
         position:absolute;
@@ -35,7 +34,17 @@
     }
 
     header {
-        padding: 50px 40px;
+        padding: 40px 20px;
+        text-align: center;
+    }
+
+    /* responsive logo */
+    .logo {
+        width: 160px;
+        max-width: 60%;
+        height: auto;
+        margin-bottom: 20px;
+        filter: drop-shadow(0 0 12px #00ff9c);
     }
 
     h1 {
@@ -51,13 +60,14 @@
     }
 
     .terminal-box {
-        margin: 40px;
+        margin: 20px;
         border: 1px solid #00ff9c55;
         padding: 25px;
         border-radius: 8px;
         background: rgba(0, 20, 15, 0.4);
         box-shadow: inset 0 0 15px #00ff9c33;
         position: relative;
+        overflow-x: auto;
     }
 
     .dot-bar {
@@ -83,7 +93,6 @@
         font-size: 0.9rem;
     }
 
-    /* typing cursor */
     .cursor {
         display: inline-block;
         width: 10px;
@@ -98,7 +107,7 @@
     }
 
     section {
-        margin: 40px;
+        margin: 40px 20px;
     }
 
     h2 {
@@ -110,6 +119,7 @@
     p, li {
         color: #a8ffdf;
         line-height: 1.6;
+        font-size: 1.05rem;
     }
 
     ul {
@@ -122,6 +132,63 @@
         color:#00ff9c88;
         font-size: 0.9rem;
     }
+
+
+    /* ----------------------------------------------------
+       RESPONSIVE MEDIA QUERIES
+       ---------------------------------------------------- */
+
+    /* Tablets */
+    @media (max-width: 900px) {
+        h1 {
+            font-size: 2.4rem;
+        }
+        .tagline {
+            font-size: 1rem;
+        }
+        .terminal-box {
+            font-size: 0.95rem;
+        }
+    }
+
+    /* Phones */
+    @media (max-width: 600px) {
+        .logo {
+            width: 120px;
+        }
+        h1 {
+            font-size: 1.9rem;
+        }
+        .tagline {
+            font-size: 0.9rem;
+        }
+        section {
+            margin: 30px 15px;
+        }
+        p, li {
+            font-size: 0.95rem;
+        }
+        .terminal-box {
+            padding: 18px;
+        }
+    }
+
+    /* Small Phones */
+    @media (max-width: 400px) {
+        .logo {
+            width: 95px;
+        }
+        h1 {
+            font-size: 1.6rem;
+        }
+        .tagline {
+            font-size: 0.85rem;
+        }
+        p, li {
+            font-size: 0.9rem;
+        }
+    }
+
 </style>
 </head>
 
@@ -167,7 +234,7 @@
 <section>
     <h2>Contact</h2>
     <p>Email: <span style="color:#00ffa3">psylabs-research@zohomail.in</span></p>
-    <p>GitHub: <span style="color:#00ffa3">https://psylabs.co.in</span></p>
+    <p>Website: <span style="color:#00ffa3">https://psylabs.co.in</span></p>
 </section>
 
 <footer>
