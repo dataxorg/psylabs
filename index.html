@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechSphere – IT, Software, AI & Monitoring Solutions</title>
+    <style>
+        :root {
+            --bg-color: #f5f5f5;
+            --text-color: #333;
+            --header-bg: #0a3d62;
+            --nav-bg: #1e3799;
+            --card-bg: #ffffff;
+        }
+
+        body.dark {
+            --bg-color: #1e1e1e;
+            --text-color: #e6e6e6;
+            --header-bg: #0a3d62;
+            --nav-bg: #103671;
+            --card-bg: #2a2a2a;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-color);
+            color: var(--text-color);
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        header {
+            background: var(--header-bg);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Dark mode toggle button */
+        .toggle-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: white;
+            color: #222;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        body.dark .toggle-btn {
+            background: #333;
+            color: #eee;
+        }
+
+        nav {
+            background: var(--nav-bg);
+            padding: 10px 0;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover { text-decoration: underline; }
+
+        section {
+            padding: 50px 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        h2 { color: var(--header-bg); }
+
+        body.dark h2 { color: #4aa3ff; }
+
+        .card {
+            background: var(--card-bg);
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: background 0.3s ease;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--header-bg);
+            color: white;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>TechSphere</h1>
+    <p>IT Solutions • Software Engineering • Artificial Intelligence • Monitoring Tools • Open-Source Development</p>
+
+    <button class="toggle-btn" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+</header>
+
+<nav>
+    <a href="#software">Software</a>
+    <a href="#ai">AI</a>
+    <a href="#monitoring">Monitoring Tools</a>
+    <a href="#opensource">Open-Source</a>
+    <a href="#contact">Contact</a>
+</nav>
+
+<section id="software">
+    <h2>Software Development</h2>
+    <div class="card">
+        <p>We build scalable, modern, and secure software solutions tailored to enterprise needs.</p>
+        <ul>
+            <li>Web & Mobile Applications</li>
+            <li>API Design & Microservices</li>
+            <li>Cloud-native Solutions</li>
+            <li>Automation & DevOps Pipelines</li>
+        </ul>
+    </div>
+</section>
+
+<section id="ai">
+    <h2>Artificial Intelligence</h2>
+    <div class="card">
+        <p>Modern AI technologies integrated into business workflows for efficiency and insights.</p>
+        <ul>
+            <li>Machine Learning Models</li>
+            <li>NLP & Chatbots</li>
+            <li>Predictive Analytics</li>
+            <li>AI-driven Automation</li>
+        </ul>
+    </div>
+</section>
+
+<section id="monitoring">
+    <h2>Monitoring Tools</h2>
+    <div class="card">
+        <p>We provide observability and real-time monitoring solutions using open-source tools.</p>
+        <ul>
+            <li>Prometheus & Grafana</li>
+            <li>Zabbix / Nagios</li>
+            <li>ELK / OpenSearch</li>
+            <li>Kubernetes Monitoring</li>
+        </ul>
+    </div>
+</section>
+
+<section id="opensource">
+    <h2>Open-Source Development</h2>
+    <div class="card">
+        <p>We support and contribute to open-source communities.</p>
+        <ul>
+            <li>Custom Tools & Plugins</li>
+            <li>Community Collaboration</li>
+            <li>Code Review & Optimization</li>
+            <li>Open-Source Integrations</li>
+        </ul>
+    </div>
+</section>
+
+<section id="contact">
+    <h2>Contact Us</h2>
+    <div class="card">
+        <p>Email: <strong>contact@techsphere.com</strong></p>
+        <p>Phone: <strong>+000-000-0000</strong></p>
+        <p>Website: www.techsphere.com</p>
+    </div>
+</section>
+
+<footer>
+    © 2025 TechSphere – IT, AI & Open-Source Solutions
+</footer>
+
+<script>
+    // Load saved theme
+    const isDark = localStorage.getItem("darkMode") === "true";
+    if (isDark) document.body.classList.add("dark");
+
+    function toggleDarkMode() {
+        document.body.classList.toggle("dark");
+        const enabled = document.body.classList.contains("dark");
+        localStorage.setItem("darkMode", enabled);
+        document.querySelector(".toggle-btn").textContent = enabled ? "☀️ Light Mode" : "🌙 Dark Mode";
+    }
+
+    // Set correct button label on load
+    document.querySelector(".toggle-btn").textContent = 
+        document.body.classList.contains("dark") ? "☀️ Light Mode" : "🌙 Dark Mode";
+</script>
+
+</body>
+</html>
