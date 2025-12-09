@@ -34,17 +34,7 @@
     }
 
     header {
-        padding: 40px 20px;
-        text-align: center;
-    }
-
-    /* responsive logo */
-    .logo {
-        width: 160px;
-        max-width: 60%;
-        height: auto;
-        margin-bottom: 20px;
-        filter: drop-shadow(0 0 12px #00ff9c);
+        padding: 50px 40px;
     }
 
     h1 {
@@ -60,14 +50,15 @@
     }
 
     .terminal-box {
-        margin: 20px;
+        margin: 40px;
         border: 1px solid #00ff9c55;
         padding: 25px;
         border-radius: 8px;
         background: rgba(0, 20, 15, 0.4);
         box-shadow: inset 0 0 15px #00ff9c33;
         position: relative;
-        overflow-x: auto;
+        max-height: 400px; /* Restrict vertical expansion */
+        overflow-y: auto; /* Enable scrolling */
     }
 
     .dot-bar {
@@ -77,11 +68,7 @@
         display: flex;
         gap: 6px;
     }
-    .dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
     .red { background:#ff5f56; }
     .yellow { background:#ffbd2e; }
     .green { background:#27c93f; }
@@ -107,7 +94,7 @@
     }
 
     section {
-        margin: 40px 20px;
+        margin: 40px;
     }
 
     h2 {
@@ -119,11 +106,6 @@
     p, li {
         color: #a8ffdf;
         line-height: 1.6;
-        font-size: 1.05rem;
-    }
-
-    ul {
-        padding-left: 20px;
     }
 
     footer {
@@ -133,73 +115,31 @@
         font-size: 0.9rem;
     }
 
-
-    /* ----------------------------------------------------
-       RESPONSIVE MEDIA QUERIES
-       ---------------------------------------------------- */
-
-    /* Tablets */
-    @media (max-width: 900px) {
-        h1 {
-            font-size: 2.4rem;
-        }
-        .tagline {
-            font-size: 1rem;
-        }
-        .terminal-box {
-            font-size: 0.95rem;
-        }
+    /* Input styling for main terminal */
+    #terminal-input {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        outline: none;
+        background: #001a12;
+        color: #00ff9c;
+        font-size: 1rem;
+        margin-top: 10px;
+        border-radius: 5px;
+        display: none;
     }
-
-    /* Phones */
-    @media (max-width: 600px) {
-        .logo {
-            width: 120px;
-        }
-        h1 {
-            font-size: 1.9rem;
-        }
-        .tagline {
-            font-size: 0.9rem;
-        }
-        section {
-            margin: 30px 15px;
-        }
-        p, li {
-            font-size: 0.95rem;
-        }
-        .terminal-box {
-            padding: 18px;
-        }
-    }
-
-    /* Small Phones */
-    @media (max-width: 400px) {
-        .logo {
-            width: 95px;
-        }
-        h1 {
-            font-size: 1.6rem;
-        }
-        .tagline {
-            font-size: 0.85rem;
-        }
-        p, li {
-            font-size: 0.9rem;
-        }
-    }
-
 </style>
 </head>
 
 <body>
 
 <header>
-    <img src="psylabs_logo.png" alt="psylabs_logo" class="logo">	
+    <img src="psylabs_logo.png" alt="psylabs_logo" class="logo">    
     <h1>OpenSource Development & Data Research Lab</h1>
     <div class="tagline">Innovating in public. Engineering the future, line by line.</div>
 </header>
 
+<!-- MAIN BOOT + UTILITY TERMINAL -->
 <div class="terminal-box">
     <div class="dot-bar">
         <div class="dot red"></div>
@@ -210,6 +150,7 @@
 
     <pre id="terminal-text"></pre>
     <span class="cursor"></span>
+    <input id="terminal-input" placeholder="Enter command... (Type: help)">
 </div>
 
 <section>
@@ -234,14 +175,15 @@
 <section>
     <h2>Contact</h2>
     <p>Email: <span style="color:#00ffa3">psylabs-research@zohomail.in</span></p>
-    <p>Website: <span style="color:#00ffa3">https://psylabs.co.in</span></p>
+    <p>GitHub: <span style="color:#00ffa3">https://psylabs.co.in</span></p>
 </section>
 
 <footer>
-    © PsyLabs 2025 OpenSource Dev & Data Research Lab — Built with ♥ in Open Source
+    © 2025 OpenSource Dev & Data Research Lab — Built with ♥ in Open Source
 </footer>
 
 <script>
+/* BOOT TERMINAL TEXT */
 const terminalLines = [
     "Monitoring tools development...",
     "LLM building & training...",
@@ -255,7 +197,103 @@ let index = 0;
 let lineIndex = 0;
 const speed = 50; 
 const terminal = document.getElementById("terminal-text");
+const input = document.getElementById("terminal-input");
 
+/* Utility Functions */
+function print(t) {
+    terminal.textContent += "\n" + t;
+    terminal.scrollTop = terminal.scrollHeight;
+}
+
+function base64Encode(t) { return btoa(t); }
+function base64Decode(t) { try { return atob(t); } catch { return "Invalid Base64."; } }
+
+async function hash(text, type) {
+    if (type === "MD5") return md5(text); // Use pure JS MD5
+
+    const data = new TextEncoder().encode(text);
+    const buffer = await crypto.subtle.digest(type, data);
+    return [...new Uint8Array(buffer)].map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+function rand(n) {
+    const c = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let o = "";
+    for (let i=0;i<n;i++) o += c[Math.floor(Math.random()*c.length)];
+    return o;
+}
+
+/* Pure JavaScript MD5 Implementation */
+function md5(string) {
+    function cmn(q, a, b, x, s, t) {
+        a = add32(add32(a, q), add32(x, t));
+        return add32((a << s) | (a >>> (32 - s)), b);
+    }
+    function ff(a,b,c,d,x,s,t){return cmn((b & c) | ((~b) & d), a, b, x, s, t);}
+    function gg(a,b,c,d,x,s,t){return cmn((b & d) | (c & (~d)), a, b, x, s, t);}
+    function hh(a,b,c,d,x,s,t){return cmn(b ^ c ^ d, a, b, x, s, t);}
+    function ii(a,b,c,d,x,s,t){return cmn(c ^ (b | (~d)), a, b, x, s, t);}
+
+    function md5cycle(x,k){
+        let [a,b,c,d] = x;
+        a=ff(a,b,c,d,k[0],7,-680876936); d=ff(d,a,b,c,k[1],12,-389564586);
+        c=ff(c,d,a,b,k[2],17,606105819); b=ff(b,c,d,a,k[3],22,-1044525330);
+        a=ff(a,b,c,d,k[4],7,-176418897); d=ff(d,a,b,c,k[5],12,1200080426);
+        c=ff(c,d,a,b,k[6],17,-1473231341); b=ff(b,c,d,a,k[7],22,-45705983);
+        a=ff(a,b,c,d,k[8],7,1770035416); d=ff(d,a,b,c,k[9],12,-1958414417);
+        c=ff(c,d,a,b,k[10],17,-42063); b=ff(b,c,d,a,k[11],22,-1990404162);
+        a=ff(a,b,c,d,k[12],7,1804603682); d=ff(d,a,b,c,k[13],12,-40341101);
+        c=ff(c,d,a,b,k[14],17,-1502002290); b=ff(b,c,d,a,k[15],22,1236535329);
+
+        a=gg(a,b,c,d,k[1],5,-165796510); d=gg(d,a,b,c,k[6],9,-1069501632);
+        c=gg(c,d,a,b,k[11],14,643717713); b=gg(b,c,d,a,k[0],20,-373897302);
+        a=gg(a,b,c,d,k[5],5,-701558691); d=gg(d,a,b,c,k[10],9,38016083);
+        c=gg(c,d,a,b,k[15],14,-660478335); b=gg(b,c,d,a,k[4],20,-405537848);
+        a=gg(a,b,c,d,k[9],5,568446438); d=gg(d,a,b,c,k[14],9,-1019803690);
+        c=gg(c,d,a,b,k[3],14,-187363961); b=gg(b,c,d,a,k[8],20,1163531501);
+        a=gg(a,b,c,d,k[13],5,-1444681467); d=gg(d,a,b,c,k[2],9,-51403784);
+        c=gg(c,d,a,b,k[7],14,1735328473); b=gg(b,c,d,a,k[12],20,-1926607734);
+
+        a=hh(a,b,c,d,k[5],4,-378558); d=hh(d,a,b,c,k[8],11,-2022574463);
+        c=hh(c,d,a,b,k[11],16,1839030562); b=hh(b,c,d,a,k[14],23,-35309556);
+        a=hh(a,b,c,d,k[1],4,-1530992060); d=hh(d,a,b,c,k[4],11,1272893353);
+        c=hh(c,d,a,b,k[7],16,-155497632); b=hh(b,c,d,a,k[10],23,-1094730640);
+        a=hh(a,b,c,d,k[13],4,681279174); d=hh(d,a,b,c,k[0],11,-358537222);
+        c=hh(c,d,a,b,k[3],16,-722521979); b=hh(b,c,d,a,k[6],23,76029189);
+        a=hh(a,b,c,d,k[9],4,-640364487); d=hh(d,a,b,c,k[12],11,-421815835);
+        c=hh(c,d,a,b,k[15],16,530742520); b=hh(b,c,d,a,k[2],23,-995338651);
+
+        a=ii(a,b,c,d,k[0],6,-198630844); d=ii(d,a,b,c,k[7],10,1126891415);
+        c=ii(c,d,a,b,k[14],15,-1416354905); b=ii(b,c,d,a,k[5],21,-57434055);
+        a=ii(a,b,c,d,k[12],6,1700485571); d=ii(d,a,b,c,k[3],10,-1894986606);
+        c=ii(c,d,a,b,k[10],15,-1051523); b=ii(b,c,d,a,k[1],21,-2054922799);
+        a=ii(a,b,c,d,k[8],6,1873313359); d=ii(d,a,b,c,k[15],10,-30611744);
+        c=ii(c,d,a,b,k[6],15,-1560198380); b=ii(b,c,d,a,k[13],21,1309151649);
+        a=ii(a,b,c,d,k[4],6,-145523070); d=ii(d,a,b,c,k[11],10,-1120210379);
+        c=ii(c,d,a,b,k[2],15,718787259); b=ii(b,c,d,a,k[9],21,-343485551);
+
+        x[0]=add32(a,x[0]); x[1]=add32(b,x[1]);
+        x[2]=add32(c,x[2]); x[3]=add32(d,x[3]);
+    }
+
+    function md51(s){
+        let n=s.length, state=[1732584193,-271733879,-1732584194,271733878], i;
+        const tail=new Array(16).fill(0);
+        let j;
+        for(i=0;i<n;i++){ j=(i%4)*8; tail[i>>2]|=s.charCodeAt(i)<<j; }
+        tail[n>>2]|=0x80<<((n%4)*8);
+        if((n%64)>55){ md5cycle(state, tail); for(i=0;i<16;i++) tail[i]=0; }
+        tail[14]=n*8; md5cycle(state, tail); return state;
+    }
+
+    function rhex(n){ let s="",j; for(j=0;j<4;j++) s+=("0"+((n>>(j*8+4))&0x0F).toString(16)+((n>>(j*8))&0x0F).toString(16)); return s;}
+    function hex(x){ return rhex(x[0])+rhex(x[1])+rhex(x[2])+rhex(x[3]); }
+    function add32(a,b){ return (a+b)&0xFFFFFFFF; }
+
+    return hex(md51(string));
+}
+
+/* BOOT TERMINAL TYPING */
 function typeLine() {
     if (lineIndex < terminalLines[index].length) {
         terminal.textContent += terminalLines[index][lineIndex];
@@ -267,11 +305,60 @@ function typeLine() {
         lineIndex = 0;
         if (index < terminalLines.length) {
             setTimeout(typeLine, 500);
+        } else {
+            input.style.display = "block";
+            input.focus();
         }
     }
 }
-
 typeLine();
+
+/* COMMAND HANDLER */
+input.addEventListener("keydown", async (e) => {
+    if (e.key === "Enter") {
+        const cmd = input.value.trim();
+        print("> " + cmd);
+
+        const parts = cmd.split(" ");
+        const main = parts[0].toLowerCase();
+        const arg = parts.slice(1).join(" ");
+
+        if (main === "help") {
+            print(`
+Commands:
+ base64 encode <text>
+ base64 decode <text>
+ sha1 <text>
+ sha256 <text>
+ sha512 <text>
+ md5 <text>
+ reverse <text>
+ upper <text>
+ lower <text>
+ random <length>
+ uuid
+ date
+ clear
+            `);
+        }
+        else if (main === "base64" && parts[1] === "encode") print(base64Encode(arg));
+        else if (main === "base64" && parts[1] === "decode") print(base64Decode(arg));
+        else if (main === "sha1") print(await hash(arg,"SHA-1"));
+        else if (main === "sha256") print(await hash(arg,"SHA-256"));
+        else if (main === "sha512") print(await hash(arg,"SHA-512"));
+        else if (main === "md5") print(await hash(arg,"MD5"));
+        else if (main === "reverse") print(arg.split("").reverse().join(""));
+        else if (main === "upper") print(arg.toUpperCase());
+        else if (main === "lower") print(arg.toLowerCase());
+        else if (main === "random") print(rand(parseInt(parts[1])));
+        else if (main === "uuid") print(crypto.randomUUID());
+        else if (main === "date") print(new Date().toString());
+        else if (main === "clear") terminal.textContent = "";
+        else print("Unknown command. Type help");
+
+        input.value = "";
+    }
+});
 </script>
 
 </body>
